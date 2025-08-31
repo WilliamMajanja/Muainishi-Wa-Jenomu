@@ -68,10 +68,11 @@ const App: React.FC = () => {
     setResult(null);
 
     try {
-      const analysisContent = await runGenomeAnalysis(fileContent, selectedAnalysis);
+      const { raw, structured } = await runGenomeAnalysis(fileContent, selectedAnalysis);
       setResult({
         title: selectedAnalysis,
-        content: analysisContent,
+        content: raw, // The formatted JSON string or error message
+        structuredData: structured, // The parsed object
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred.";
@@ -96,13 +97,13 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-brand-primary font-sans">
       <Header />
       <main className="py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto flex flex-col items-center space-y-8">
+        <div className="max-w-7xl mx-auto flex flex-col items-center space-y-10">
           
           {result && (
              <div className="w-full max-w-4xl text-center">
               <button
                 onClick={handleReset}
-                className="bg-brand-cyan text-brand-primary font-bold py-2 px-6 rounded-lg hover:opacity-90 transition-opacity"
+                className="bg-brand-highlight text-brand-primary font-bold py-2 px-6 rounded-lg hover:opacity-90 transition-opacity shadow-lg shadow-brand-highlight/30"
               >
                 Start New Analysis
               </button>
@@ -123,7 +124,7 @@ const App: React.FC = () => {
                   <button
                     onClick={handleRunAnalysis}
                     disabled={isLoading}
-                    className="bg-brand-cyan text-brand-primary font-bold py-3 px-8 rounded-lg text-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-brand-highlight text-brand-primary font-bold py-3 px-8 rounded-lg text-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-highlight/30"
                   >
                     Analyze Genome
                   </button>
@@ -141,7 +142,9 @@ const App: React.FC = () => {
             </div>
           )}
 
-          <ResultsDisplay result={result} analysisType={selectedAnalysis} />
+          {/* Fix: Update the props for ResultsDisplay. */}
+          {/* The `analysisType` prop is no longer needed as it's derived from `result.title`. */}
+          <ResultsDisplay result={result} />
         </div>
       </main>
       <footer className="text-center py-4 text-sm text-brand-accent">

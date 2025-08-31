@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisType } from '../types';
 
 if (!process.env.API_KEY) {
@@ -8,63 +8,188 @@ if (!process.env.API_KEY) {
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 const model = 'gemini-2.5-flash';
 
-const getSystemInstruction = (analysisType: AnalysisType): string => {
+const getResponseSchema = (analysisType: AnalysisType): object => {
   switch (analysisType) {
     case AnalysisType.CLASSIFICATION:
-      return "You are a world-class bioinformatics expert specializing in human genetics. Your task is to classify a human genome sample. Provide a detailed report on potential ancestry, haplogroups (maternal and paternal if possible), and any notable high-level genetic markers. Format the output in clean, readable markdown with clear headings.";
+      return {
+        type: Type.OBJECT,
+        properties: {
+          summary: { type: Type.STRING, description: 'A brief, one-paragraph summary of the classification findings.' },
+          ancestry: {
+            type: Type.ARRAY,
+            description: 'A breakdown of ancestral components.',
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                region: { type: Type.STRING, description: 'Geographic or ethnic region.' },
+                percentage: { type: Type.NUMBER, description: 'Percentage of ancestry from this region.' },
+              },
+            },
+          },
+          haplogroups: {
+            type: Type.ARRAY,
+            description: 'Identified maternal and paternal haplogroups.',
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                type: { type: Type.STRING, description: 'Either "Maternal" or "Paternal".' },
+                group: { type: Type.STRING, description: 'The haplogroup identifier (e.g., H1, R1b).' },
+              },
+            },
+          },
+        },
+      };
     case AnalysisType.SEGMENTATION:
-      return "You are a genomic data scientist. Your task is to perform segmentation on a human genome sample. Identify and describe key segments like potential genes, regulatory regions, and non-coding DNA. Present the results in a summary followed by a detailed markdown table with columns: Segment ID, Chromosome (if identifiable), Start Position, End Position, Type (Gene/Regulatory/etc.), and a brief Description.";
+       return {
+         type: Type.OBJECT,
+         properties: {
+            summary: { type: Type.STRING, description: "A brief summary of the segmentation." },
+            totalLength: { type: Type.NUMBER, description: "The total length of the analyzed sequence segment for visualization scaling, if determinable." },
+            segments: {
+              type: Type.ARRAY,
+              description: 'Key segments identified in the genome.',
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  segmentId: { type: Type.STRING },
+                  chromosome: { type: Type.STRING },
+                  startPosition: { type: Type.NUMBER },
+                  endPosition: { type: Type.NUMBER },
+                  type: { type: Type.STRING, description: 'e.g., Gene, Regulatory, Non-coding' },
+                  description: { type: Type.STRING },
+                },
+              },
+            },
+         },
+       };
     case AnalysisType.INTEGRATION:
-      return "You are a specialist in viral genomics and retrovirology. Your task is to analyze a human genome sample for signs of viral integration (e.g., from retroviruses like HIV or HPV). Identify potential integration sites and the likely viral source. If no definitive signs are found, state that clearly but hypothesize about any ambiguous sequences. Format the report with a summary and a markdown table of potential integration points.";
+      return {
+        type: Type.OBJECT,
+        properties: {
+            summary: { type: Type.STRING, description: "A summary of findings regarding viral integration. State clearly if none were found." },
+            integrationPoints: {
+                type: Type.ARRAY,
+                items: {
+                    type: Type.OBJECT,
+                    properties: {
+                        chromosome: { type: Type.STRING },
+                        position: { type: Type.NUMBER },
+                        viralSource: { type: Type.STRING, description: "e.g., HPV-16" },
+                        confidence: { type: Type.STRING, description: "High, Medium, or Low" },
+                    }
+                }
+            }
+        }
+      };
     case AnalysisType.MUTATION:
-      return "You are a clinical geneticist. Your task is to analyze a human genome sequence file (VCF-like data) to identify and track significant mutations. For each mutation, list its ID (e.g., rsID if available), type (SNP, indel, etc.), clinical significance (e.g., Pathogenic, Likely Benign, VUS), and the associated gene. Format the output as a detailed markdown table.";
+        return {
+            type: Type.OBJECT,
+            properties: {
+                summary: { type: Type.STRING, description: "A summary of the mutation analysis." },
+                mutations: {
+                    type: Type.ARRAY,
+                    items: {
+                        type: Type.OBJECT,
+                        properties: {
+                            id: { type: Type.STRING, description: "rsID or other identifier" },
+                            gene: { type: Type.STRING },
+                            type: { type: Type.STRING, description: "SNP, indel, etc." },
+                            clinicalSignificance: { type: Type.STRING, description: "Pathogenic, Benign, VUS, etc." },
+                        }
+                    }
+                }
+            }
+        };
     case AnalysisType.PHARMACOGENOMICS:
-      return "You are an expert in pharmacogenetics. Analyze the provided genomic data to identify key variants related to drug metabolism and response. Focus on well-known pharmacogenomic genes like CYP2D6, CYP2C19, VKORC1, and TPMT. For each identified variant, provide the gene, the specific variant (e.g., *2, *17), the predicted phenotype (e.g., Poor Metabolizer, Rapid Metabolizer), and a list of commonly affected drugs with prescribing implications. Format as a markdown report with a summary table.";
+        return {
+            type: Type.OBJECT,
+            properties: {
+                summary: { type: Type.STRING, description: "A summary of the pharmacogenomic analysis." },
+                variants: {
+                    type: Type.ARRAY,
+                    items: {
+                        type: Type.OBJECT,
+                        properties: {
+                            gene: { type: Type.STRING },
+                            variant: { type: Type.STRING, description: "*2, *17, etc." },
+                            phenotype: { type: Type.STRING, description: "e.g., Poor Metabolizer" },
+                            drugImplications: {
+                                type: Type.ARRAY,
+                                items: {
+                                    type: Type.OBJECT,
+                                    properties: {
+                                        drug: { type: Type.STRING },
+                                        implication: { type: Type.STRING },
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
     default:
-      return "You are a helpful assistant.";
+      return {};
   }
 };
 
 const getPrompt = (analysisType: AnalysisType, fileContentSample: string): string => {
   return `
-    Please perform a "${analysisType}" analysis on the following human genome sequence data sample. 
-    Provide a detailed, professional-grade report based on your system instruction. 
-    If the data seems incomplete or malformed, make reasonable assumptions and note them in your report.
+    Please perform a "${analysisType}" analysis on the following human genome sequence data sample.
+    Provide a detailed, professional-grade report based on the requested JSON schema.
+    The summary field should be a human-readable text summary of the findings.
+    If the data seems incomplete or malformed, make reasonable assumptions and note them in your summary.
 
     --- DATA SAMPLE ---
     ${fileContentSample}
     --- END DATA SAMPLE ---
   `;
-}
+};
 
 export const runGenomeAnalysis = async (
   fileContent: string,
   analysisType: AnalysisType
-): Promise<string> => {
+): Promise<{ raw: string; structured: any }> => {
   try {
-    // Use a sizable sample, but not the entire file to avoid context length issues.
-    // For VCF-like data (mutation/pharmaco), a larger sample might be better.
     const sampleSize = (analysisType === AnalysisType.MUTATION || analysisType === AnalysisType.PHARMACOGENOMICS) ? 30000 : 15000;
     const fileContentSample = fileContent.substring(0, sampleSize);
-    
-    const systemInstruction = getSystemInstruction(analysisType);
+
+    // System instruction is less critical for format but good for persona
+    const systemInstruction = "You are a world-class bioinformatics expert specializing in human genetics. Analyze the provided data and return the results in the specified JSON format.";
     const prompt = getPrompt(analysisType, fileContentSample);
+    const responseSchema = getResponseSchema(analysisType);
 
     const response = await ai.models.generateContent({
       model,
       contents: prompt,
       config: {
         systemInstruction,
-        temperature: 0.3,
+        temperature: 0.2,
+        responseMimeType: "application/json",
+        responseSchema,
       }
     });
 
-    return response.text;
+    const rawText = response.text;
+    let structuredData = null;
+    try {
+        structuredData = JSON.parse(rawText);
+    } catch (e) {
+        console.error("Failed to parse JSON response:", e);
+        // Fallback: The raw text might still be useful
+    }
+    
+    // Convert structured data back to a formatted string for the "Raw" view
+    const formattedRaw = structuredData ? JSON.stringify(structuredData, null, 2) : rawText;
+
+    return { raw: formattedRaw, structured: structuredData };
   } catch (error) {
     console.error("Error calling Gemini API:", error);
     if (error instanceof Error) {
-        return `An error occurred during analysis: ${error.message}`;
+        const message = `An error occurred during analysis: ${error.message}`;
+        return { raw: message, structured: null };
     }
-    return "An unknown error occurred during analysis.";
+    const message = "An unknown error occurred during analysis.";
+    return { raw: message, structured: null };
   }
 };

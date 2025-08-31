@@ -50,8 +50,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, selectedFi
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        className={`flex justify-center items-center w-full h-48 px-6 transition-all duration-300 border-2 border-dashed rounded-lg cursor-pointer
-          ${isDragging ? 'border-brand-cyan bg-brand-accent' : 'border-brand-accent hover:border-brand-light bg-brand-secondary'}
+        className={`relative flex justify-center items-center w-full h-48 px-6 transition-all duration-300 border-2 border-dashed rounded-lg cursor-pointer
+          ${isDragging ? 'border-brand-highlight bg-brand-accent/50' : 'border-brand-accent hover:border-brand-light bg-brand-secondary'}
         `}
       >
         <div className="text-center">
@@ -69,7 +69,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect, selectedFi
                 <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               <p className="mt-1 text-sm text-brand-light">
-                <span className="font-semibold text-brand-cyan">Click to upload</span> or drag and drop
+                <span className="font-semibold text-brand-highlight">Click to upload</span> or drag and drop
               </p>
               <p className="text-xs text-brand-light mt-1">FASTA, VCF, FASTQ, etc.</p>
             </>

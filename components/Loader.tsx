@@ -28,7 +28,7 @@ export const Loader: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center space-y-4 my-8">
-      <DnaIcon className="w-16 h-16 text-brand-cyan animate-spin" />
+      <DnaIcon className="w-16 h-16 text-brand-highlight animate-spin" />
       <p className="text-lg text-brand-light animate-pulse">{message}</p>
     </div>
   );

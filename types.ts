@@ -6,10 +6,103 @@ export enum AnalysisType {
   PHARMACOGENOMICS = 'Pharmacogenomics',
 }
 
-export interface AnalysisResult {
-  title: string;
-  content: string;
+// Data structures for visualizations
+export interface AncestryResult {
+  region: string;
+  percentage: number;
 }
+export interface HaplogroupResult {
+  type: 'Maternal' | 'Paternal' | 'Unknown';
+  group: string;
+}
+export interface ClassificationData {
+  summary: string;
+  ancestry: AncestryResult[];
+  haplogroups: HaplogroupResult[];
+}
+
+export interface Segment {
+  segmentId: string;
+  chromosome: string;
+  startPosition: number;
+  endPosition: number;
+  type: string;
+  description: string;
+}
+export interface SegmentationData {
+  summary: string;
+  segments: Segment[];
+  totalLength: number; // To help with scaling the visualization
+}
+
+export interface IntegrationPoint {
+    chromosome: string;
+    position: number;
+    viralSource: string;
+    confidence: 'High' | 'Medium' | 'Low';
+}
+export interface IntegrationData {
+    summary: string;
+    integrationPoints: IntegrationPoint[];
+}
+
+export interface Mutation {
+    id: string;
+    gene: string;
+    type: string;
+    clinicalSignificance: 'Pathogenic' | 'Likely Pathogenic' | 'Benign' | 'Likely Benign' | 'Uncertain Significance' | string;
+}
+export interface MutationData {
+    summary: string;
+    mutations: Mutation[];
+}
+
+export interface DrugImplication {
+    drug: string;
+    implication: string;
+}
+export interface PharmacogenomicsVariant {
+    gene: string;
+    variant: string;
+    phenotype: 'Poor Metabolizer' | 'Intermediate Metabolizer' | 'Normal Metabolizer' | 'Rapid Metabolizer' | 'Ultra-rapid Metabolizer' | string;
+    drugImplications: DrugImplication[];
+}
+export interface PharmacogenomicsData {
+    summary: string;
+    variants: PharmacogenomicsVariant[];
+}
+
+
+// Fix: Convert AnalysisResult to a discriminated union type.
+// This allows TypeScript to correctly infer the type of `structuredData`
+// based on the `title` property, ensuring type safety in components like ResultsDisplay.
+export type AnalysisResult =
+  | {
+      title: AnalysisType.CLASSIFICATION;
+      content: string;
+      structuredData?: ClassificationData;
+    }
+  | {
+      title: AnalysisType.SEGMENTATION;
+      content: string;
+      structuredData?: SegmentationData;
+    }
+  | {
+      title: AnalysisType.INTEGRATION;
+      content: string;
+      structuredData?: IntegrationData;
+    }
+  | {
+      title: AnalysisType.MUTATION;
+      content: string;
+      structuredData?: MutationData;
+    }
+  | {
+      title: AnalysisType.PHARMACOGENOMICS;
+      content: string;
+      structuredData?: PharmacogenomicsData;
+    };
+
 
 export interface GenomeSample {
   name: string;
