@@ -1,9 +1,9 @@
+
 import React from 'react';
 import { IntegrationData } from '../../types';
 import { VizContainer } from './VizContainer';
 import { DnaIcon } from '../icons/DnaIcon';
 
-// Fix: Update the component's props to accept a `title` for the SVG tooltip.
 const IntegrationMarkerIcon: React.FC<{ className?: string; title?: string }> = ({ className, title }) => (
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
@@ -11,45 +11,74 @@ const IntegrationMarkerIcon: React.FC<{ className?: string; title?: string }> = 
     fill="currentColor" 
     className={className}
   >
-    {/* Add a title element for accessibility and tooltips */}
     {title && <title>{title}</title>}
-    <path d="M12 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
-    <path fillRule="evenodd" d="M12 23c-4.418 0-8-3.582-8-8 0-4.418 8-13 8-13s8 8.582 8 13c0 4.418-3.582 8-8 8Zm0-12a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" clipRule="evenodd" />
+    <path fillRule="evenodd" d="M12 2.25c-5.132 0-9.25 4.118-9.25 9.25 0 5.926 7.234 11.433 8.783 12.83a.75.75 0 001.034.001c1.549-1.396 8.783-6.903 8.783-12.83C21.25 6.368 17.132 2.25 12 2.25zm0 12.5a3.25 3.25 0 100-6.5 3.25 3.25 0 000 6.5z" clipRule="evenodd" />
   </svg>
 );
 
 
+const confidenceColors: Record<string, string> = {
+    'High': 'text-brand-rose',
+    'Medium': 'text-brand-gold',
+    'Low': 'text-brand-light'
+};
+
 export const IntegrationViz: React.FC<{ data: IntegrationData }> = ({ data }) => {
+    
+    const pointsByChromosome = data.integrationPoints.reduce<Record<string, typeof data.integrationPoints>>((acc, point) => {
+        if (!acc[point.chromosome]) {
+            acc[point.chromosome] = [];
+        }
+        acc[point.chromosome].push(point);
+        return acc;
+    }, {});
+    
+    // Sort chromosomes (e.g., 1, 2, ..., 10, X, Y, MT)
+    const sortedChromosomes = Object.keys(pointsByChromosome).sort((a, b) => {
+        const aIsNumeric = !isNaN(Number(a));
+        const bIsNumeric = !isNaN(Number(b));
+        if (aIsNumeric && bIsNumeric) return Number(a) - Number(b);
+        if (aIsNumeric) return -1;
+        if (bIsNumeric) return 1;
+        return a.localeCompare(b);
+    });
+
     return (
       <VizContainer title="Viral Integration Analysis" summary={data.summary}>
-        {data.integrationPoints && data.integrationPoints.length > 0 ? (
-          <div className="space-y-4">
-            {data.integrationPoints.map((point, index) => (
-              <div key={index} className="p-4 bg-brand-secondary rounded-lg border border-brand-accent/50">
-                <div className="flex justify-between items-center">
-                    <div>
-                        <h4 className="font-bold text-brand-green mb-1">Potential Integration Point</h4>
-                        <p className="text-sm text-brand-light">
-                            <span className="font-semibold text-brand-text">Chromosome:</span> {point.chromosome} @ <span className="font-mono">{point.position.toLocaleString()}</span>
-                        </p>
-                    </div>
-                    <div className="text-right">
-                        <p className="font-mono text-brand-text">{point.viralSource}</p>
-                        <p className="text-sm text-brand-light">Confidence: {point.confidence}</p>
-                    </div>
-                </div>
-                 <div className="relative flex items-center gap-2 mt-4 text-brand-light">
-                    <div className="h-1.5 flex-1 bg-brand-blue rounded-l-full"></div>
-                    <IntegrationMarkerIcon className="w-8 h-8 text-red-500 absolute left-1/2 -translate-x-1/2 -top-4 animate-pulse" title={`Integration of ${point.viralSource}`} />
-                    <div className="h-1.5 flex-1 bg-brand-blue rounded-r-full"></div>
+        {data.integrationPoints.length > 0 ? (
+          <div className="space-y-6">
+            {sortedChromosomes.map(chromosome => (
+              <div key={chromosome} className="bg-brand-secondary p-4 rounded-lg border border-brand-accent/50">
+                <h4 className="font-bold text-lg text-brand-light mb-4">Chromosome {chromosome}</h4>
+                <div className="relative w-full h-8 bg-brand-accent rounded-full flex items-center px-2">
+                  <DnaIcon className="w-full h-4 text-brand-primary opacity-50"/>
+                  
+                  {/* For simplicity, we'll distribute points evenly along the view. */}
+                  {pointsByChromosome[chromosome].map((point, index) => {
+                      const positionPercent = (index + 1) / (pointsByChromosome[chromosome].length + 1) * 100;
+                      const color = confidenceColors[point.confidence] || 'text-brand-light';
+                      return (
+                        <div 
+                          key={`${point.position}-${index}`} 
+                          className="absolute group"
+                          style={{ left: `${positionPercent}%`, transform: 'translateX(-50%)' }}
+                        >
+                            <IntegrationMarkerIcon className={`w-6 h-6 ${color} cursor-pointer drop-shadow-lg transition-transform group-hover:scale-125`} />
+                            <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-max p-2 text-xs bg-brand-primary text-brand-text rounded-md opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-10 shadow-lg">
+                                <strong>{point.viralSource}</strong>
+                                <p>Position: {point.position.toLocaleString()}</p>
+                                <p>Confidence: <span className={`font-bold ${color}`}>{point.confidence}</span></p>
+                            </div>
+                        </div>
+                      )
+                  })}
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center p-8 bg-brand-secondary rounded-lg">
-            <DnaIcon className="w-12 h-12 mx-auto text-brand-green mb-4" />
-            <p className="text-lg text-brand-light">No definitive viral integration points were identified in the sample.</p>
+          <div className="text-center py-8 bg-brand-secondary rounded-lg">
+            <p className="text-lg text-brand-light">No viral integration points were detected in this sample.</p>
           </div>
         )}
       </VizContainer>
