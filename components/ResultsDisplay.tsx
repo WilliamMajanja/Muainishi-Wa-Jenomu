@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AnalysisResult, AnalysisType } from '../types';
 import { ANALYSIS_COLORS } from '../constants';
-import { ClassificationViz, SegmentationViz, IntegrationViz, MutationViz, PharmacogenomicsViz } from './visualizations';
+import { ClassificationViz, SegmentationViz, IntegrationViz, MutationViz, PharmacogenomicsViz, TherapeuticViz, IntegrativeViz, ComparativeMutationViz } from './visualizations';
 
 // Fix: Update component props to rely on the `result` object's discriminated union type.
 // The `analysisType` prop is no longer needed as the type can be inferred from `result.title`.
@@ -43,6 +43,12 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ result }) => {
         return <MutationViz data={result.structuredData} />;
       case AnalysisType.PHARMACOGENOMICS:
         return <PharmacogenomicsViz data={result.structuredData} />;
+      case AnalysisType.THERAPEUTIC_INSIGHTS:
+        return <TherapeuticViz data={result.structuredData} />;
+      case AnalysisType.INTEGRATIVE_ANALYSIS:
+        return <IntegrativeViz data={result.structuredData} />;
+      case AnalysisType.COMPARATIVE_MUTATION:
+        return <ComparativeMutationViz data={result.structuredData} />;
       default:
         return null;
     }

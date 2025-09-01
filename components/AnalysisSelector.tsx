@@ -6,11 +6,15 @@ import { SegmentationIcon } from './icons/SegmentationIcon';
 import { IntegrationIcon } from './icons/IntegrationIcon';
 import { MutationIcon } from './icons/MutationIcon';
 import { PharmacogenomicsIcon } from './icons/PharmacogenomicsIcon';
+import { TherapeuticIcon } from './icons/TherapeuticIcon';
+import { IntegrativeIcon } from './icons/IntegrativeIcon';
+import { ComparativeIcon } from './icons/ComparativeIcon';
 
 interface AnalysisSelectorProps {
   onSelect: (type: AnalysisType) => void;
   selectedType: AnalysisType | null;
   isVisible: boolean;
+  mode: 'single' | 'comparison';
 }
 
 const icons: Record<AnalysisType, React.FC<{className?: string}>> = {
@@ -19,16 +23,36 @@ const icons: Record<AnalysisType, React.FC<{className?: string}>> = {
   [AnalysisType.INTEGRATION]: IntegrationIcon,
   [AnalysisType.MUTATION]: MutationIcon,
   [AnalysisType.PHARMACOGENOMICS]: PharmacogenomicsIcon,
+  [AnalysisType.THERAPEUTIC_INSIGHTS]: TherapeuticIcon,
+  [AnalysisType.INTEGRATIVE_ANALYSIS]: IntegrativeIcon,
+  [AnalysisType.COMPARATIVE_MUTATION]: ComparativeIcon,
 };
 
-export const AnalysisSelector: React.FC<AnalysisSelectorProps> = ({ onSelect, selectedType, isVisible }) => {
+const singleAnalysisTypes: AnalysisType[] = [
+    AnalysisType.CLASSIFICATION,
+    AnalysisType.SEGMENTATION,
+    AnalysisType.INTEGRATION,
+    AnalysisType.MUTATION,
+    AnalysisType.PHARMACOGENOMICS,
+    AnalysisType.THERAPEUTIC_INSIGHTS,
+    AnalysisType.INTEGRATIVE_ANALYSIS,
+];
+
+const comparisonAnalysisTypes: AnalysisType[] = [
+    AnalysisType.COMPARATIVE_MUTATION,
+];
+
+export const AnalysisSelector: React.FC<AnalysisSelectorProps> = ({ onSelect, selectedType, isVisible, mode }) => {
   if (!isVisible) return null;
 
+  const analysisTypesToShow = mode === 'single' ? singleAnalysisTypes : comparisonAnalysisTypes;
+  const gridCols = mode === 'single' ? 'lg:grid-cols-3 xl:grid-cols-7' : 'lg:grid-cols-1';
+
   return (
-    <div className="w-full max-w-5xl mx-auto">
+    <div className="w-full max-w-7xl mx-auto">
       <h2 className="text-lg font-semibold mb-4 text-brand-light">2. Select Analysis Type</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        {Object.values(AnalysisType).map((type) => {
+      <div className={`grid grid-cols-1 sm:grid-cols-2 ${gridCols} gap-4`}>
+        {analysisTypesToShow.map((type) => {
           const Icon = icons[type];
           const colors = ANALYSIS_COLORS[type];
           const isSelected = selectedType === type;

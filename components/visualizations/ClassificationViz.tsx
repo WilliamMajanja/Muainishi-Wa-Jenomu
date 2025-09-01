@@ -1,6 +1,9 @@
+
 import React from 'react';
 import { ClassificationData } from '../../types';
 import { VizContainer } from './VizContainer';
+import { MaleIcon } from '../icons/MaleIcon';
+import { FemaleIcon } from '../icons/FemaleIcon';
 
 // A simple hook to create SVG path for a pie chart slice
 const getArcPath = (x: number, y: number, radius: number, startAngle: number, endAngle: number) => {
@@ -33,13 +36,16 @@ const chartColors = [
 export const ClassificationViz: React.FC<{ data: ClassificationData }> = ({ data }) => {
     let cumulativePercent = 0;
     const totalPercent = data.ancestry.reduce((sum, item) => sum + item.percentage, 0) || 100;
+    
+    const paternalHaplogroup = data.haplogroups.find(h => h.type === 'Paternal');
+    const maternalHaplogroup = data.haplogroups.find(h => h.type === 'Maternal');
 
     return (
       <VizContainer title="Genetic Ancestry & Haplogroups" summary={data.summary}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            <div>
-                <h4 className="font-bold text-brand-light mb-4 text-center">Ancestry Composition</h4>
-                <svg viewBox="0 0 100 100" className="w-full max-w-[250px] mx-auto drop-shadow-lg">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+            <div className="lg:col-span-3">
+                <h4 className="font-bold text-lg text-brand-light mb-4 text-center">Ancestry Composition</h4>
+                 <svg viewBox="0 0 100 100" className="w-full max-w-[250px] mx-auto drop-shadow-lg">
                     {data.ancestry.map((item, index) => {
                         const percent = item.percentage / totalPercent;
                         const startAngle = cumulativePercent * 2 * Math.PI - Math.PI / 2;
@@ -54,8 +60,9 @@ export const ClassificationViz: React.FC<{ data: ClassificationData }> = ({ data
                         );
                     })}
                      <circle cx="50" cy="50" r="25" fill="#1e293b" />
+                     <text x="50" y="52" textAnchor="middle" dominantBaseline="middle" fill="#e2e8f0" fontSize="10" fontWeight="bold">Ancestry</text>
                 </svg>
-                 <ul className="mt-6 flex flex-wrap justify-center gap-x-4 gap-y-2">
+                 <ul className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-3">
                     {data.ancestry.map((item, index) => (
                         <li key={item.region} className="flex items-center text-sm">
                             <span className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: chartColors[index % chartColors.length] }}></span>
@@ -64,16 +71,35 @@ export const ClassificationViz: React.FC<{ data: ClassificationData }> = ({ data
                     ))}
                 </ul>
             </div>
-            <div>
-                <h4 className="font-bold text-brand-light mb-4">Haplogroups</h4>
-                <ul className="space-y-3">
-                    {data.haplogroups.map(hg => (
-                        <li key={hg.group} className="p-3 bg-brand-secondary rounded-md border border-brand-accent/50">
-                            <span className={`font-bold ${hg.type === 'Maternal' ? 'text-brand-purple' : 'text-brand-blue'}`}>{hg.type}: </span>
-                            <span className="font-mono text-brand-text">{hg.group}</span>
-                        </li>
-                    ))}
-                </ul>
+            <div className="lg:col-span-2">
+                <h4 className="font-bold text-lg text-brand-light mb-4 text-center">Key Lineages</h4>
+                <div className="space-y-4">
+                    {maternalHaplogroup && (
+                        <div className="p-4 bg-brand-secondary rounded-lg border border-brand-accent/50 flex items-center gap-4">
+                            <div className="p-3 bg-brand-primary rounded-full">
+                                <FemaleIcon className="w-6 h-6 text-brand-purple" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-brand-light">Maternal Haplogroup</p>
+                                <p className="font-mono text-xl font-bold text-brand-text">{maternalHaplogroup.group}</p>
+                            </div>
+                        </div>
+                    )}
+                     {paternalHaplogroup && (
+                        <div className="p-4 bg-brand-secondary rounded-lg border border-brand-accent/50 flex items-center gap-4">
+                            <div className="p-3 bg-brand-primary rounded-full">
+                                <MaleIcon className="w-6 h-6 text-brand-blue" />
+                            </div>
+                            <div>
+                                <p className="text-sm text-brand-light">Paternal Haplogroup</p>
+                                <p className="font-mono text-xl font-bold text-brand-text">{paternalHaplogroup.group}</p>
+                            </div>
+                        </div>
+                    )}
+                    {data.haplogroups.length === 0 && (
+                        <p className="text-center text-brand-light">No haplogroup data available.</p>
+                    )}
+                </div>
             </div>
         </div>
       </VizContainer>

@@ -4,20 +4,23 @@
 
 **Muainishi wa Jenomu** (Swahili for *Genome Classifier*) is a sophisticated, AI-driven web application designed for comprehensive human genome analysis. Leveraging the power of Google's Gemini API, this tool provides world-class bioinformatics insights through an intuitive and visually rich interface.
 
-Users can upload their genome sequence files (or use provided samples) and perform five distinct types of analysis. The results are presented in two convenient formats: a clean, interactive graphical visualization and the raw, structured JSON data.
+Users can upload their genome sequence files, select from a rich library of historical samples, and perform a wide range of analyses. The results are presented in two convenient formats: a clean, interactive graphical visualization and the raw, structured JSON data.
 
 ---
 
 ## ✨ Key Features
 
 - **Intuitive File Handling**: Easy file uploads with a drag-and-drop interface.
-- **Sample Datasets**: Start analyzing immediately with pre-loaded genome samples.
-- **Five Powerful Analysis Types**:
+- **Rich Historical Library**: Explore and compare dozens of significant historical and mutant genomes, from Henrietta Lacks to ancient Neanderthals.
+- **Multi-Sample Comparison**: Select multiple samples from the library to perform side-by-side comparative analysis (e.g., comparing mutations).
+- **Powerful Analysis Types**:
   - **🧬 Classification**: Uncover genetic ancestry and haplogroups.
   - **📊 Segmentation**: Identify and map key genomic segments like genes and regulatory regions.
   - **🦠 Viral Integration**: Scan for potential viral DNA integrated into the genome.
   - **⚡ Mutation Tracking**: Pinpoint and analyze significant genetic mutations.
   - **💊 Pharmacogenomics**: Predict drug responses and metabolic phenotypes based on genetic markers.
+  - **🎯 Therapeutic Insights**: Identify genes that are known targets for existing or experimental therapies.
+  - **🔗 Integrative Analysis (Cross-Feature)**: Get a holistic view by connecting findings across domains, linking mutations to pharmacogenomics and therapeutic options.
 - **Dual-View Results**: Toggle between beautiful, interactive **Graphical Visualizations** and the detailed **Raw JSON Data**.
 - **Modern & Responsive UI**: A sleek, dark-themed interface built with React and Tailwind CSS that works seamlessly across all devices.
 - **AI-Powered**: All analyses are performed by Google's advanced Gemini model, ensuring high-quality, structured results.
@@ -65,9 +68,9 @@ This is a fully client-side application and requires no backend or complex build
 
 ## 🔬 How It Works
 
-1.  **Upload Data**: The user uploads a genome sequence file (e.g., FASTA, VCF) or selects a sample. The file content is read directly in the browser.
-2.  **Select Analysis**: The user chooses one of the five analysis types.
-3.  **Call Gemini API**: A prompt is constructed containing the analysis type, a sample of the genome data, and a detailed JSON schema for the desired output format. This is sent to the Gemini API.
+1.  **Select Data**: The user uploads a genome sequence file or selects one or more samples from the historical library.
+2.  **Select Analysis**: The user chooses an analysis type. The available options change depending on whether one or multiple samples are selected.
+3.  **Call Gemini API**: A prompt is constructed containing the analysis type, the genome data, and a detailed JSON schema for the desired output format. This is sent to the Gemini API.
 4.  **Receive Structured Data**: The Gemini API processes the request and returns a JSON object that conforms to the requested schema.
 5.  **Render Results**: The application parses the JSON response and uses it to render both the interactive visualizations and the raw data view.
 

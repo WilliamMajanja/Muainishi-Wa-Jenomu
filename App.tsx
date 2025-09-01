@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { AnalysisType, AnalysisResult, GenomeSample } from './types';
 import { Header } from './components/Header';
 import { FileUpload } from './components/FileUpload';
@@ -9,8 +9,7 @@ import { ResultsDisplay } from './components/ResultsDisplay';
 import { runGenomeAnalysis } from './services/geminiService';
 
 const App: React.FC = () => {
-  const [selectedFile, setSelectedFile] = useState<{ name: string; size?: number } | null>(null);
-  const [fileContent, setFileContent] = useState<string | null>(null);
+  const [selectedSamples, setSelectedSamples] = useState<GenomeSample[]>([]);
   const [selectedAnalysis, setSelectedAnalysis] = useState<AnalysisType | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,26 +28,39 @@ const App: React.FC = () => {
     });
   };
 
-  const handleFileSelect = useCallback(async (file: File) => {
-    setSelectedFile(file);
+  const resetStateForNewSelection = () => {
     setResult(null);
     setError(null);
+    setSelectedAnalysis(null);
+  }
+
+  const handleFileSelect = useCallback(async (file: File) => {
+    resetStateForNewSelection();
     try {
       const content = await readFileContent(file);
-      setFileContent(content);
+      const newSample: GenomeSample = { 
+        name: file.name, 
+        content, 
+        description: `Uploaded file on ${new Date().toLocaleDateString()}`
+      };
+      setSelectedSamples([newSample]);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred.";
       setError(`Failed to read file: ${errorMessage}`);
-      setFileContent(null);
-      setSelectedFile(null);
+      setSelectedSamples([]);
     }
   }, []);
   
-  const handleSampleSelect = useCallback((sample: GenomeSample) => {
-    setSelectedFile({ name: sample.name });
-    setFileContent(sample.content);
-    setResult(null);
-    setError(null);
+  const handleToggleSample = useCallback((sample: GenomeSample) => {
+    resetStateForNewSelection();
+    setSelectedSamples(prev => {
+        const isSelected = prev.some(s => s.name === sample.name);
+        if (isSelected) {
+            return prev.filter(s => s.name !== sample.name);
+        } else {
+            return [...prev, sample];
+        }
+    });
   }, []);
 
   const handleAnalysisSelect = useCallback((type: AnalysisType) => {
@@ -58,8 +70,8 @@ const App: React.FC = () => {
   }, []);
 
   const handleRunAnalysis = async () => {
-    if (!fileContent || !selectedAnalysis) {
-      setError("Please select a file and an analysis type.");
+    if (selectedSamples.length === 0 || !selectedAnalysis) {
+      setError("Please select at least one sample and an analysis type.");
       return;
     }
 
@@ -68,11 +80,11 @@ const App: React.FC = () => {
     setResult(null);
 
     try {
-      const { raw, structured } = await runGenomeAnalysis(fileContent, selectedAnalysis);
+      const { raw, structured } = await runGenomeAnalysis(selectedSamples, selectedAnalysis);
       setResult({
         title: selectedAnalysis,
-        content: raw, // The formatted JSON string or error message
-        structuredData: structured, // The parsed object
+        content: raw,
+        structuredData: structured,
       });
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An unexpected error occurred.";
@@ -83,15 +95,16 @@ const App: React.FC = () => {
   };
   
   const handleReset = () => {
-    setSelectedFile(null);
-    setFileContent(null);
+    setSelectedSamples([]);
     setSelectedAnalysis(null);
     setResult(null);
     setError(null);
     setIsLoading(false);
   }
 
-  const isAnalysisSetupComplete = !!fileContent && !!selectedAnalysis;
+  const analysisMode = useMemo(() => (selectedSamples.length > 1 ? 'comparison' : 'single'), [selectedSamples]);
+  const isReadyForAnalysis = selectedSamples.length > 0;
+  const isAnalysisSetupComplete = isReadyForAnalysis && !!selectedAnalysis;
 
   return (
     <div className="min-h-screen bg-brand-primary font-sans">
@@ -112,11 +125,23 @@ const App: React.FC = () => {
 
           {!result && !isLoading && (
             <>
-              <FileUpload onFileSelect={handleFileSelect} selectedFile={selectedFile} />
+              <FileUpload onFileSelect={handleFileSelect} selectedFile={selectedSamples.length === 1 ? selectedSamples[0] : null} />
               
-              <SampleSelector onSampleSelect={handleSampleSelect} />
+              <div className="w-full max-w-4xl mx-auto text-center">
+                  <div className="inline-block my-2 px-4 py-1 text-sm font-bold text-brand-accent bg-brand-secondary rounded-full">OR</div>
+                  <h2 className="text-lg font-semibold mb-4 text-brand-light">
+                    {analysisMode === 'single' ? 'Select a sample from the library' : 'Select multiple samples to compare'}
+                  </h2>
+              </div>
 
-              <AnalysisSelector onSelect={handleAnalysisSelect} selectedType={selectedAnalysis} isVisible={!!fileContent} />
+              <SampleSelector onToggleSample={handleToggleSample} selectedSamples={selectedSamples}/>
+
+              <AnalysisSelector 
+                onSelect={handleAnalysisSelect} 
+                selectedType={selectedAnalysis} 
+                isVisible={isReadyForAnalysis} 
+                mode={analysisMode}
+              />
               
               {isAnalysisSetupComplete && (
                 <div className="text-center pt-4">
@@ -126,7 +151,7 @@ const App: React.FC = () => {
                     disabled={isLoading}
                     className="bg-brand-highlight text-brand-primary font-bold py-3 px-8 rounded-lg text-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-brand-highlight/30"
                   >
-                    Analyze Genome
+                    {`Analyze ${selectedSamples.length} Sample${selectedSamples.length > 1 ? 's' : ''}`}
                   </button>
                 </div>
               )}
@@ -142,8 +167,6 @@ const App: React.FC = () => {
             </div>
           )}
 
-          {/* Fix: Update the props for ResultsDisplay. */}
-          {/* The `analysisType` prop is no longer needed as it's derived from `result.title`. */}
           <ResultsDisplay result={result} />
         </div>
       </main>

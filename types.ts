@@ -4,6 +4,9 @@ export enum AnalysisType {
   INTEGRATION = 'Integration',
   MUTATION = 'Mutation Tracking',
   PHARMACOGENOMICS = 'Pharmacogenomics',
+  THERAPEUTIC_INSIGHTS = 'Therapeutic Insights',
+  INTEGRATIVE_ANALYSIS = 'Integrative Analysis',
+  COMPARATIVE_MUTATION = 'Comparative Mutation',
 }
 
 // Data structures for visualizations
@@ -72,6 +75,38 @@ export interface PharmacogenomicsData {
     variants: PharmacogenomicsVariant[];
 }
 
+export interface TherapeuticTarget {
+    gene: string;
+    associatedConditions: string[];
+    therapeuticApproach: string; // e.g., "Monoclonal antibody target", "Candidate for gene therapy"
+}
+
+export interface TherapeuticInsightsData {
+    summary: string;
+    targets: TherapeuticTarget[];
+}
+
+export interface IntegrativeFinding {
+  gene: string;
+  narrative: string; // A text description connecting the findings
+  mutation?: Pick<Mutation, 'id' | 'type' | 'clinicalSignificance'>;
+  pharmacogenomicVariant?: Pick<PharmacogenomicsVariant, 'variant' | 'phenotype'>;
+  therapeuticTarget?: Pick<TherapeuticTarget, 'associatedConditions' | 'therapeuticApproach'>;
+}
+export interface IntegrativeAnalysisData {
+  summary: string;
+  findings: IntegrativeFinding[];
+}
+
+export interface ComparativeResult {
+  sampleName: string;
+  mutations: Mutation[];
+}
+export interface ComparativeMutationData {
+  summary: string;
+  comparisonResults: ComparativeResult[];
+}
+
 
 // Fix: Convert AnalysisResult to a discriminated union type.
 // This allows TypeScript to correctly infer the type of `structuredData`
@@ -101,6 +136,21 @@ export type AnalysisResult =
       title: AnalysisType.PHARMACOGENOMICS;
       content: string;
       structuredData?: PharmacogenomicsData;
+    }
+  | {
+      title: AnalysisType.THERAPEUTIC_INSIGHTS;
+      content: string;
+      structuredData?: TherapeuticInsightsData;
+    }
+  | {
+      title: AnalysisType.INTEGRATIVE_ANALYSIS;
+      content: string;
+      structuredData?: IntegrativeAnalysisData;
+    }
+  | {
+      title: AnalysisType.COMPARATIVE_MUTATION;
+      content: string;
+      structuredData?: ComparativeMutationData;
     };
 
 
