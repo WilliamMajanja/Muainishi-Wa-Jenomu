@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { Mutation } from '../../types';
+import { ExternalLinkIcon } from '../icons/ExternalLinkIcon';
 
 interface MutationCardProps {
   mutation: Mutation;
@@ -20,13 +20,35 @@ const significanceStyles: Record<string, { text: string; bg: string; border: str
 export const MutationCard: React.FC<MutationCardProps> = ({ mutation, badge }) => {
   const styles = significanceStyles[mutation.clinicalSignificance] || significanceStyles.default;
 
+  // Function to generate details for the external link
+  const getExternalLinkDetails = (): { url: string; text: string; } | null => {
+    if (mutation.id && mutation.id.toLowerCase().startsWith('rs')) {
+      return {
+        url: `https://www.ncbi.nlm.nih.gov/snp/${mutation.id}`,
+        text: `View on NCBI dbSNP`
+      };
+    }
+    if (mutation.gene) {
+      return {
+        url: `https://www.ncbi.nlm.nih.gov/gene/?term=${mutation.gene}`,
+        text: `View on NCBI Gene`
+      };
+    }
+    return null;
+  };
+
+  const externalLinkDetails = getExternalLinkDetails();
+
   return (
     <div className={`p-4 rounded-lg border ${styles.border} ${styles.bg} flex flex-col justify-between`}>
       <div>
         <div className="flex justify-between items-start gap-2">
-          <h4 className="text-lg font-bold font-mono text-brand-text break-all">{mutation.gene}</h4>
+          <div className="flex-1">
+            <h4 className="text-lg font-bold font-mono text-brand-text break-all">{mutation.gene}</h4>
+            <p className={`font-semibold ${styles.text}`}>{mutation.clinicalSignificance}</p>
+          </div>
           {badge && (
-            <span className={`text-xs font-bold px-2 py-1 rounded-full whitespace-nowrap ${
+            <span className={`text-xs font-bold px-2 py-1 rounded-full whitespace-nowrap self-start ${
               badge === 'Shared'
                 ? 'bg-brand-purple/80 text-white'
                 : 'bg-brand-cyan/80 text-brand-primary'
@@ -35,11 +57,28 @@ export const MutationCard: React.FC<MutationCardProps> = ({ mutation, badge }) =
             </span>
           )}
         </div>
-        <p className={`font-semibold ${styles.text}`}>{mutation.clinicalSignificance}</p>
       </div>
-      <div className="mt-4 text-sm text-brand-light bg-brand-primary/50 p-3 rounded-md">
+      <div className="mt-4 text-sm text-brand-light bg-brand-primary/50 p-3 rounded-md space-y-1">
         <p><strong>ID:</strong> <span className="font-mono">{mutation.id}</span></p>
         <p><strong>Type:</strong> <span className="font-mono">{mutation.type}</span></p>
+        {mutation.position && (
+          <p><strong>Position:</strong> <span className="font-mono">{mutation.position}</span></p>
+        )}
+        {mutation.refAllele && mutation.altAllele && (
+          <p><strong>Change:</strong> <span className="font-mono">{mutation.refAllele} &rarr; {mutation.altAllele}</span></p>
+        )}
+        {externalLinkDetails && (
+            <a 
+                href={externalLinkDetails.url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                title={externalLinkDetails.text}
+                className="flex items-center gap-1.5 text-brand-highlight hover:underline pt-1 group"
+            >
+                <span>{externalLinkDetails.text}</span>
+                <ExternalLinkIcon className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+            </a>
+        )}
       </div>
     </div>
   );

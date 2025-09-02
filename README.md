@@ -1,35 +1,42 @@
-# Muainishi wa Jenomu - AI-Powered Genome Analysis Platform
+# Muainishi wa Jenomu
+### Your Personal AI Genomics Lab. Decode the Blueprint of Life with Google Gemini.
 
 ![Muainishi wa Jenomu Screenshot](https://storage.googleapis.com/aistudio-public/gallery/a3014798-e4b9-4709-a764-f65c69707293/app-screenshot.png)
 
-**Muainishi wa Jenomu** (Swahili for *Genome Classifier*) is a sophisticated, AI-driven web application designed for comprehensive human genome analysis. Leveraging the power of Google's Gemini API, this tool provides world-class bioinformatics insights through an intuitive and visually rich interface.
-
-Users can upload their genome sequence files, select from a rich library of historical samples, and perform a wide range of analyses. The results are presented in two convenient formats: a clean, interactive graphical visualization and the raw, structured JSON data.
+Step into the future of genetic analysis. **Muainishi wa Jenomu** (Swahili for *Genome Classifier*) transforms raw genomic data into breathtaking insights. This isn't just a tool; it's your personal, AI-powered bioinformatics lab, putting the revolutionary capabilities of Google's Gemini model at your fingertips. Upload a sequence, journey through a library of historical genomes, and watch as complex data is distilled into beautiful, interactive visualizations.
 
 ---
 
-## ✨ Key Features
+## ✨ Features That Set Us Apart
 
-- **Intuitive File Handling**: Easy file uploads with a drag-and-drop interface.
-- **Rich Historical Library**: Explore and compare dozens of significant historical and mutant genomes, from Henrietta Lacks to ancient Neanderthals.
-- **Multi-Sample Comparison**: Select multiple samples from the library to perform side-by-side comparative analysis (e.g., comparing mutations).
-- **Powerful Analysis Types**:
-  - **🧬 Classification**: Uncover genetic ancestry and haplogroups.
-  - **📊 Segmentation**: Identify and map key genomic segments like genes and regulatory regions.
-  - **🦠 Viral Integration**: Scan for potential viral DNA integrated into the genome.
-  - **⚡ Mutation Tracking**: Pinpoint and analyze significant genetic mutations.
-  - **💊 Pharmacogenomics**: Predict drug responses and metabolic phenotypes based on genetic markers.
-  - **🎯 Therapeutic Insights**: Identify genes that are known targets for existing or experimental therapies.
-  - **🔗 Integrative Analysis (Cross-Feature)**: Get a holistic view by connecting findings across domains, linking mutations to pharmacogenomics and therapeutic options.
-- **Dual-View Results**: Toggle between beautiful, interactive **Graphical Visualizations** and the detailed **Raw JSON Data**.
-- **Modern & Responsive UI**: A sleek, dark-themed interface built with React and Tailwind CSS that works seamlessly across all devices.
-- **AI-Powered**: All analyses are performed by Google's advanced Gemini model, ensuring high-quality, structured results.
+- **🚀 Effortless Data Exploration**: Drag, drop, and analyze. Upload your own genome files or journey through our curated library of fascinating historical DNA—from Neanderthals and ancient mummies to legendary cell lines.
+
+- **🔄 Dynamic Comparative Analysis**: Pit genomes against each other. Select multiple samples and instantly uncover the subtle and significant mutations that differentiate them.
+
+- **🎨 Stunning Dual-View Interface**: Experience your data like never before. Immerse yourself in rich, interactive graphical visualizations, or switch to the raw, structured JSON for deep-dive analysis. The power is yours.
+
+- **⚡ Blazing-Fast & Secure**: All analysis happens in your browser. Powered by React and Tailwind CSS, the interface is fluid, responsive, and secure. No servers, no data storage, just pure client-side power.
 
 ---
 
-## 🚀 Getting Started
+## 🔬 Dive Deep with Powerful, AI-Driven Analyses
 
-This is a fully client-side application and requires no backend or complex build setup to run.
+Select your sample, choose your lens, and let Gemini reveal the story hidden in the code.
+
+- **🧬 Classification**: Trace genetic roots and uncover ancient ancestral lineages and haplogroups.
+- **📊 Segmentation**: Visualize the architecture of a chromosome, identifying key genes, regulatory regions, and non-coding DNA.
+- **🦠 Viral Integration**: Hunt for the hidden signatures of viruses embedded within the genome.
+- **⚡ Mutation Tracking**: Pinpoint and evaluate critical genetic mutations and their clinical significance.
+- **💊 Pharmacogenomics**: Predict how specific genes can influence metabolic responses to medications.
+- **🎯 Therapeutic Insights**: Identify genetic markers that are known targets for groundbreaking therapies.
+- **🔗 Integrative Analysis**: Connect the dots between mutations, drug responses, and therapeutic pathways in a single, holistic view.
+- **🆚 Comparative Mutation**: Uncover unique and shared mutations across multiple samples in a side-by-side showdown.
+
+---
+
+## 🚀 Get Started in Seconds
+
+This is a fully client-side application and requires no backend or complex build setup.
 
 ### Prerequisites
 
@@ -38,41 +45,34 @@ This is a fully client-side application and requires no backend or complex build
 
 ### Setup & Running
 
-1.  **Clone the repository or download the source files.**
+1.  **Get the code:** Clone the repository or download the source files.
 
-2.  **Set up your API Key:**
-    This application requires a Google Gemini API key to function. The key is accessed via the `process.env.API_KEY` variable in the code.
+2.  **Provide your API Key:** The application needs a Google Gemini API key to function. You must configure your environment so the code can access the key via `process.env.API_KEY`. For local development with a tool like Vite:
+    - Create a `.env.local` file in the project root.
+    - Add your API key to it: `VITE_API_KEY=YOUR_GEMINI_API_KEY_HERE`
+    - The service file (`services/geminiService.ts`) is pre-configured to handle this.
 
-    To make your key available to the application, you'll need to serve the files in an environment where this variable can be set. A simple way to do this for local development is to use a tool like `vite`.
-
-    - Create a `.env` file in the root of the project.
-    - Add your API key to the `.env` file:
-      ```
-      VITE_API_KEY=YOUR_GEMINI_API_KEY_HERE
-      ```
-    - The code internally expects `process.env.API_KEY`, so you may need to adjust the service file (`services/geminiService.ts`) to read `import.meta.env.VITE_API_KEY` if you use Vite, or configure your server to inject the environment variable correctly.
-
-3.  **Open `index.html` in your browser.**
-    If you've set up a local server (like `vite` or `http-server`), navigate to the provided local URL (e.g., `http://localhost:5173`).
+3.  **Launch:** Open `index.html` in your browser or run your local development server (e.g., `npm run dev` with Vite) and navigate to the provided URL.
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ Built with Cutting-Edge Technology
 
 - **Frontend**: [React](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **AI Model**: [Google Gemini API](https://ai.google.dev/)
-- **Icons**: Custom SVG components
+- **Icons**: Custom-built SVG components for a sharp, consistent look.
 
 ---
 
-## 🔬 How It Works
+## 🔬 How It Works: The Magic Explained
 
-1.  **Select Data**: The user uploads a genome sequence file or selects one or more samples from the historical library.
-2.  **Select Analysis**: The user chooses an analysis type. The available options change depending on whether one or multiple samples are selected.
-3.  **Call Gemini API**: A prompt is constructed containing the analysis type, the genome data, and a detailed JSON schema for the desired output format. This is sent to the Gemini API.
-4.  **Receive Structured Data**: The Gemini API processes the request and returns a JSON object that conforms to the requested schema.
-5.  **Render Results**: The application parses the JSON response and uses it to render both the interactive visualizations and the raw data view.
+1.  **Select Data**: The user uploads a genome file or selects one or more samples from the rich historical library.
+2.  **Choose Analysis**: The user picks an analysis type tailored for single or multiple samples.
+3.  **Construct Prompt**: A highly specific prompt is engineered, combining the genome data, the analysis type, and a detailed JSON schema that instructs the AI on the exact output format.
+4.  **Query Gemini**: The request is sent to the Gemini API for analysis.
+5.  **Receive Structured Data**: Gemini processes the complex biological data and returns a perfectly structured JSON object.
+6.  **Render Insights**: The app parses the JSON and dynamically renders both the stunning interactive visualizations and the clean, raw data view.
 
 ---
 

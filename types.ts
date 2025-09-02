@@ -53,6 +53,9 @@ export interface Mutation {
     id: string;
     gene: string;
     type: string;
+    position?: string; // e.g., "chr7:117559590"
+    refAllele?: string;
+    altAllele?: string;
     clinicalSignificance: 'Pathogenic' | 'Likely Pathogenic' | 'Benign' | 'Likely Benign' | 'Uncertain Significance' | string;
 }
 export interface MutationData {

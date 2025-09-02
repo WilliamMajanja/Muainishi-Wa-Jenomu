@@ -1,7 +1,6 @@
 
-
-import React from 'react';
-import { ClassificationData } from '../../types';
+import React, { useState } from 'react';
+import { ClassificationData, AncestryResult } from '../../types';
 import { VizContainer } from './VizContainer';
 import { MaleIcon } from '../icons/MaleIcon';
 import { FemaleIcon } from '../icons/FemaleIcon';
@@ -35,6 +34,8 @@ const chartColors = [
 ];
 
 export const ClassificationViz: React.FC<{ data: ClassificationData }> = ({ data }) => {
+    const [activeSlice, setActiveSlice] = useState<(AncestryResult & { midAngle: number }) | null>(null);
+
     let cumulativePercent = 0;
     const totalPercent = data.ancestry.reduce((sum, item) => sum + item.percentage, 0) || 100;
     
@@ -46,22 +47,48 @@ export const ClassificationViz: React.FC<{ data: ClassificationData }> = ({ data
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
             <div className="lg:col-span-3">
                 <h4 className="font-bold text-lg text-brand-light mb-4 text-center">Ancestry Composition</h4>
-                 <svg viewBox="0 0 100 100" className="w-full max-w-[250px] mx-auto drop-shadow-lg">
+                 <svg viewBox="0 0 100 100" className="w-full max-w-[250px] mx-auto drop-shadow-lg overflow-visible">
                     {data.ancestry.map((item, index) => {
                         const percent = item.percentage / totalPercent;
                         const startAngle = cumulativePercent * 2 * Math.PI - Math.PI / 2;
                         const endAngle = (cumulativePercent + percent) * 2 * Math.PI - Math.PI / 2;
+                        const midAngle = startAngle + (endAngle - startAngle) / 2;
                         cumulativePercent += percent;
                         return (
-                            <path
-                                key={item.region}
-                                d={getArcPath(50, 50, 45, startAngle, endAngle)}
-                                fill={chartColors[index % chartColors.length]}
-                            />
+                           <g
+                              key={item.region}
+                              onMouseEnter={() => setActiveSlice({ ...item, midAngle })}
+                              onMouseLeave={() => setActiveSlice(null)}
+                              className="transition-transform duration-200 hover:scale-105"
+                            >
+                                <path
+                                    d={getArcPath(50, 50, 45, startAngle, endAngle)}
+                                    fill={chartColors[index % chartColors.length]}
+                                    stroke="#1e293b"
+                                    strokeWidth="1"
+                                />
+                           </g>
                         );
                     })}
                      <circle cx="50" cy="50" r="25" fill="#1e293b" />
                      <text x="50" y="52" textAnchor="middle" dominantBaseline="middle" fill="#e2e8f0" fontSize="10" fontWeight="bold">Ancestry</text>
+                     {activeSlice && (
+                        <g className="pointer-events-none transition-opacity duration-200" opacity="1">
+                            <text
+                                x={50 + 35 * Math.cos(activeSlice.midAngle)}
+                                y={50 + 35 * Math.sin(activeSlice.midAngle)}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                fill="#e2e8f0"
+                                fontSize="6"
+                                fontWeight="bold"
+                                style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.8))' }}
+                            >
+                                <tspan x={50 + 35 * Math.cos(activeSlice.midAngle)} dy="-3.5">{activeSlice.region}</tspan>
+                                <tspan x={50 + 35 * Math.cos(activeSlice.midAngle)} dy="7">{activeSlice.percentage.toFixed(1)}%</tspan>
+                            </text>
+                        </g>
+                    )}
                 </svg>
                  <ul className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-3">
                     {data.ancestry.map((item, index) => (

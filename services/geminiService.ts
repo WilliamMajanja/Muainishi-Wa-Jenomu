@@ -94,6 +94,9 @@ const getResponseSchema = (analysisType: AnalysisType): object => {
                             id: { type: Type.STRING, description: "rsID or other identifier" },
                             gene: { type: Type.STRING },
                             type: { type: Type.STRING, description: "SNP, indel, etc." },
+                            position: { type: Type.STRING, description: "Genomic position, e.g., 'chr7:117559590'" },
+                            refAllele: { type: Type.STRING, description: "The reference allele at the position." },
+                            altAllele: { type: Type.STRING, description: "The alternate allele found in the sample." },
                             clinicalSignificance: { type: Type.STRING, description: "Pathogenic, Benign, VUS, etc." },
                         }
                     }
@@ -207,6 +210,9 @@ const getResponseSchema = (analysisType: AnalysisType): object => {
                                         id: { type: Type.STRING },
                                         gene: { type: Type.STRING },
                                         type: { type: Type.STRING },
+                                        position: { type: Type.STRING, description: "Genomic position, e.g., 'chr7:117559590'" },
+                                        refAllele: { type: Type.STRING, description: "The reference allele at the position." },
+                                        altAllele: { type: Type.STRING, description: "The alternate allele found in the sample." },
                                         clinicalSignificance: { type: Type.STRING },
                                     }
                                 }
