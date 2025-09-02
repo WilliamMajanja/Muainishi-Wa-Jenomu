@@ -1,42 +1,42 @@
-# Muainishi wa Jenomu
-### Your Personal AI Genomics Lab. Decode the Blueprint of Life with Google Gemini.
+# 🧬 Muainishi wa Jenomu: Your Personal AI Genomics Lab
+### Stop Guessing. Start Seeing. Decode the Blueprint of Life with Google Gemini.
 
 ![Muainishi wa Jenomu Screenshot](https://storage.googleapis.com/aistudio-public/gallery/a3014798-e4b9-4709-a764-f65c69707293/app-screenshot.png)
 
-Step into the future of genetic analysis. **Muainishi wa Jenomu** (Swahili for *Genome Classifier*) transforms raw genomic data into breathtaking insights. This isn't just a tool; it's your personal, AI-powered bioinformatics lab, putting the revolutionary capabilities of Google's Gemini model at your fingertips. Upload a sequence, journey through a library of historical genomes, and watch as complex data is distilled into beautiful, interactive visualizations.
+> Forget dry, impenetrable data. **Muainishi wa Jenomu** (Swahili for *Genome Classifier*) is your personal, AI-powered command center for genetic exploration. We've harnessed the unprecedented power of Google's Gemini model to transform raw, complex genomic sequences into stunning, interactive insights. This isn't just a tool; it's a revolution in your browser. Upload a sequence, compare historical genomes, and watch the secrets of DNA come to life.
 
 ---
 
-## ✨ Features That Set Us Apart
+## 🔥 Why It's a Game-Changer
 
-- **🚀 Effortless Data Exploration**: Drag, drop, and analyze. Upload your own genome files or journey through our curated library of fascinating historical DNA—from Neanderthals and ancient mummies to legendary cell lines.
+- **🚀 Instant Genius, Zero Setup**: Drag, drop, done. Go from raw data to deep insights in seconds. Explore our curated library of legendary DNA—from Neanderthals and ancient mummies to the immortal HeLa cell line.
 
-- **🔄 Dynamic Comparative Analysis**: Pit genomes against each other. Select multiple samples and instantly uncover the subtle and significant mutations that differentiate them.
+- **🆚 Epic Genome Showdowns**: Pit genomes against each other. Select multiple samples and unleash a comparative analysis to instantly spot the critical mutations that tell a unique story.
 
-- **🎨 Stunning Dual-View Interface**: Experience your data like never before. Immerse yourself in rich, interactive graphical visualizations, or switch to the raw, structured JSON for deep-dive analysis. The power is yours.
+- **🎨 Dual-View Domination**: Command your data like never before. Immerse yourself in rich, interactive graphical visualizations, then seamlessly flip to the raw, structured JSON for a deep-dive. You're in control.
 
-- **⚡ Blazing-Fast & Secure**: All analysis happens in your browser. Powered by React and Tailwind CSS, the interface is fluid, responsive, and secure. No servers, no data storage, just pure client-side power.
-
----
-
-## 🔬 Dive Deep with Powerful, AI-Driven Analyses
-
-Select your sample, choose your lens, and let Gemini reveal the story hidden in the code.
-
-- **🧬 Classification**: Trace genetic roots and uncover ancient ancestral lineages and haplogroups.
-- **📊 Segmentation**: Visualize the architecture of a chromosome, identifying key genes, regulatory regions, and non-coding DNA.
-- **🦠 Viral Integration**: Hunt for the hidden signatures of viruses embedded within the genome.
-- **⚡ Mutation Tracking**: Pinpoint and evaluate critical genetic mutations and their clinical significance.
-- **💊 Pharmacogenomics**: Predict how specific genes can influence metabolic responses to medications.
-- **🎯 Therapeutic Insights**: Identify genetic markers that are known targets for groundbreaking therapies.
-- **🔗 Integrative Analysis**: Connect the dots between mutations, drug responses, and therapeutic pathways in a single, holistic view.
-- **🆚 Comparative Mutation**: Uncover unique and shared mutations across multiple samples in a side-by-side showdown.
+- **🔒 Fort Knox Security, In Your Browser**: Blazing-fast, fluid, and utterly private. All analysis happens locally. No servers, no data storage, just pure, unadulterated client-side power. **Your data never leaves your machine.**
 
 ---
 
-## 🚀 Get Started in Seconds
+## 🔬 Unleash Your Analytical Superpowers
 
-This is a fully client-side application and requires no backend or complex build setup.
+Choose your sample, select your lens, and let Gemini expose the story hidden in the code.
+
+- **🌍 **Classification**: Uncover ancient ancestral roots and trace the epic journey of human migration through haplogroups.
+- **🗺️ **Segmentation**: Map the very architecture of a chromosome. Pinpoint genes, regulatory regions, and the vast, mysterious non-coding territories.
+- **👾 **Viral Integration**: Become a digital virus hunter. Scan the genome for the hidden footprints of ancient viral invaders.
+- **💥 **Mutation Tracking**: Isolate and analyze critical genetic mutations. Understand their power, from benign quirks to pathogenic signatures.
+- **💊 **Pharmacogenomics**: See the future of medicine. Predict how genes influence responses to drugs, paving the way for personalized treatments.
+- **🎯 **Therapeutic Insights**: Identify genetic targets for the next generation of groundbreaking therapies. Find the lock, so science can build the key.
+- **🔗 **Integrative Analysis**: Become the master strategist. Connect the dots between mutations, drug responses, and therapies in one holistic, all-seeing view.
+- **⚔️ **Comparative Mutation**: Settle the score. Uncover unique and shared mutations across multiple samples in a head-to-head genetic duel.
+
+---
+
+## 🚀 Launch in 3... 2... 1...
+
+This is a fully client-side application. No backend. No builds. No waiting.
 
 ### Prerequisites
 
@@ -56,23 +56,22 @@ This is a fully client-side application and requires no backend or complex build
 
 ---
 
-## 🛠️ Built with Cutting-Edge Technology
+## 🛠️ Forged with Cutting-Edge Technology
 
 - **Frontend**: [React](https://reactjs.org/), [TypeScript](https://www.typescriptlang.org/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **AI Model**: [Google Gemini API](https://ai.google.dev/)
-- **Icons**: Custom-built SVG components for a sharp, consistent look.
+- **AI Brain**: [Google Gemini API](https://ai.google.dev/)
+- **Icons**: Custom-built SVG components for a razor-sharp, consistent look.
 
 ---
 
-## 🔬 How It Works: The Magic Explained
+## 🪄 The Magic Under the Hood
 
-1.  **Select Data**: The user uploads a genome file or selects one or more samples from the rich historical library.
-2.  **Choose Analysis**: The user picks an analysis type tailored for single or multiple samples.
-3.  **Construct Prompt**: A highly specific prompt is engineered, combining the genome data, the analysis type, and a detailed JSON schema that instructs the AI on the exact output format.
-4.  **Query Gemini**: The request is sent to the Gemini API for analysis.
-5.  **Receive Structured Data**: Gemini processes the complex biological data and returns a perfectly structured JSON object.
-6.  **Render Insights**: The app parses the JSON and dynamically renders both the stunning interactive visualizations and the clean, raw data view.
+It's not magic, but it feels like it.
+
+1.  **You Provide the Code**: Upload a file or select from our library of historical genomes.
+2.  **Gemini Does the Heavy Lifting**: We engineer a hyper-specific prompt, sending your data and a strict JSON schema to the Gemini API.
+3.  **Instant, Beautiful Insights**: Gemini returns perfectly structured data, which we instantly render into the beautiful, interactive visualizations you see on screen.
 
 ---
 

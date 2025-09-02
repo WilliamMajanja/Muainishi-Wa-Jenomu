@@ -20,18 +20,21 @@ const significanceStyles: Record<string, { text: string; bg: string; border: str
 export const MutationCard: React.FC<MutationCardProps> = ({ mutation, badge }) => {
   const styles = significanceStyles[mutation.clinicalSignificance] || significanceStyles.default;
 
-  // Function to generate details for the external link
+  // Function to generate the most relevant external link for a mutation
   const getExternalLinkDetails = (): { url: string; text: string; } | null => {
+    // Prioritize dbSNP link if an rsID is available, as it's the most specific identifier.
     if (mutation.id && mutation.id.toLowerCase().startsWith('rs')) {
       return {
         url: `https://www.ncbi.nlm.nih.gov/snp/${mutation.id}`,
         text: `View on NCBI dbSNP`
       };
     }
+    // As a fallback, link to ClinVar for the gene, which is highly relevant for clinical significance.
     if (mutation.gene) {
+      const searchTerm = `${mutation.gene}[gene]`;
       return {
-        url: `https://www.ncbi.nlm.nih.gov/gene/?term=${mutation.gene}`,
-        text: `View on NCBI Gene`
+        url: `https://www.ncbi.nlm.nih.gov/clinvar/?term=${encodeURIComponent(searchTerm)}`,
+        text: `Search ClinVar for ${mutation.gene}`
       };
     }
     return null;
@@ -44,7 +47,7 @@ export const MutationCard: React.FC<MutationCardProps> = ({ mutation, badge }) =
       <div>
         <div className="flex justify-between items-start gap-2">
           <div className="flex-1">
-            <h4 className="text-lg font-bold font-mono text-brand-text break-all">{mutation.gene}</h4>
+            <h4 className="text-lg font-bold font-mono text-brand-text break-all">{mutation.gene || 'Unknown Gene'}</h4>
             <p className={`font-semibold ${styles.text}`}>{mutation.clinicalSignificance}</p>
           </div>
           {badge && (
